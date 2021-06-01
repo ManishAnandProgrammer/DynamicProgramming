@@ -1,16 +1,25 @@
 package pepcoding;
 
+import com.google.common.base.Stopwatch;
+
 import java.util.TreeSet;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class PathWithMaximumGold {
     public static void main(String[] args) {
         int[][] matrix = getMatrix();
-        System.out.println(maxGoldCaller(matrix, 0, 0, 2, ""));
+        Stopwatch stopwatch = Stopwatch.createUnstarted();
+        stopwatch.start();
+        System.out.println(maxGoldCaller(matrix, 0, 0, 14, ""));
+        System.out.println("Without Dp Took:: " + stopwatch.stop());
+
+        stopwatch.reset().start();
+        System.out.println(maxGoldByTabulationDp(matrix));
+        System.out.println("With Tabulation DP Took:: "+stopwatch.stop());
     }
 
     private static int[][] getMatrix() {
-        int[][] matrix = new int[3][3];
+        int[][] matrix = new int[15][15];
 
         for(int row = 0; row < matrix.length; row++) {
             for(int column = 0; column < matrix.length; column++) {
@@ -47,7 +56,7 @@ public class PathWithMaximumGold {
         }
 
         if(currentColumn == destinationColumn) {
-            System.out.println(pathSoFar);
+            //System.out.println(pathSoFar);
             return matrix[currentRow][currentColumn];
         }
 
@@ -66,5 +75,32 @@ public class PathWithMaximumGold {
             treeSet.add(diagonalDown + matrix[currentRow][currentColumn]);
 
         return treeSet.size() > 0 ? treeSet.last() : null;
+    }
+
+    private static int maxGoldByTabulationDp(int[][] matrix) {
+        int[][] dpArray = new int[matrix.length][matrix[0].length];
+
+        for(int column = matrix[0].length - 1; column >= 0; column--) {
+            for(int row = 0; row < matrix.length; row++) {
+                if(column == matrix[0].length - 1) {
+                    dpArray[row][column] = matrix[row][column];
+                } else if(row == 0) {
+                    dpArray[row][column] = matrix[row][column] + Math.max(dpArray[row][column + 1], dpArray[row + 1][column + 1]);
+                } else if(row == matrix.length - 1) {
+                    dpArray[row][column] = matrix[row][column] + Math.max(dpArray[row][column + 1], dpArray[row - 1][column + 1]);
+                } else {
+                    dpArray[row][column] = matrix[row][column] + Math.max(dpArray[row][column + 1],
+                            Math.max(dpArray[row + 1][column + 1], dpArray[row - 1][column + 1]));
+                }
+            }
+        }
+        int result = 0;
+        for(int row = 0; row < matrix.length; row++) {
+            if(dpArray[row][0] > result) {
+                result = dpArray[row][0];
+            }
+        }
+
+        return result;
     }
 }
