@@ -1,11 +1,19 @@
 package pepcoding;
 
+import com.google.common.base.Stopwatch;
+
 public class CoinChangePermutation {
     public static void main(String[] args) {
         int[] coins = {2, 3, 5, 6};
-        int targetSum = 10;
-
+        int targetSum = 55;
+        Stopwatch stopwatch = Stopwatch.createUnstarted();
+        stopwatch.start();
         printNumberOfPermutation(coins, targetSum);
+        System.out.println("Permutation of Coins With DP Took:: " + stopwatch.stop());
+
+        stopwatch.reset().start();
+        System.out.println(permutationOfCoinsWithoutDP(coins, targetSum));
+        System.out.println("Permutation of Coins Without DP Took:: " + stopwatch.stop());
     }
 
     public static void printNumberOfPermutation(int[] coins, int targetSum) {
@@ -22,5 +30,18 @@ public class CoinChangePermutation {
         }
 
         System.out.println(dp[targetSum]);
+    }
+
+    public static int permutationOfCoinsWithoutDP(int[] coins, int targetSum) {
+        if(targetSum == 0) {
+            return 1;
+        }
+
+        int totalWays = 0;
+        for(int coin : coins) {
+            if(coin <= targetSum)
+                totalWays += permutationOfCoinsWithoutDP(coins, targetSum - coin);
+        }
+        return totalWays;
     }
 }
