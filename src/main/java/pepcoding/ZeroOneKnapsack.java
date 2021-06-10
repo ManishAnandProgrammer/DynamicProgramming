@@ -2,8 +2,6 @@ package pepcoding;
 
 import com.google.common.base.Stopwatch;
 
-import java.util.Arrays;
-
 public class ZeroOneKnapsack {
     public static void main(String[] args) {
         int[] wightArray = {2, 5, 1, 3, 4};
